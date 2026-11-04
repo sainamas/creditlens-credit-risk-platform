@@ -703,5 +703,136 @@ elif page == "Expected Loss Calculator":
    
 
 elif page == "Credit Risk Fundamentals":
+
     st.header("Credit Risk Fundamentals")
-    st.info("Educational credit risk content is being added.")
+
+    st.markdown(
+        """
+        Understand the key concepts used by financial institutions
+        to assess credit risk and estimate potential losses.
+        """
+    )
+
+    st.subheader("1. Probability of Default (PD)")
+
+    st.write(
+        """
+        Probability of Default represents the likelihood that a
+        borrower will fail to meet their debt obligations within
+        a specified period.
+
+        CreditLens implements PD prediction using Logistic Regression
+        and Random Forest classification models.
+        """
+    )
+
+    st.latex(r"PD = P(\text{Default})")
+
+    st.subheader("2. Loss Given Default (LGD)")
+
+    st.write(
+        """
+        Loss Given Default measures the proportion of an exposure
+        that a lender expects to lose if a borrower defaults,
+        after accounting for recoveries.
+        """
+    )
+
+    st.latex(r"LGD = \frac{EAD - \text{Recoveries}}{EAD}")
+
+    st.info(
+        "CreditLens currently uses LGD as a user-provided assumption. "
+        "It does not train a separate LGD prediction model."
+    )
+
+    st.subheader("3. Exposure at Default (EAD)")
+
+    st.write(
+        """
+        Exposure at Default represents the estimated outstanding
+        amount owed by the borrower when default occurs.
+        """
+    )
+
+    st.latex(r"EAD = \text{Exposure at the time of default}")
+
+    st.info(
+        "CreditLens currently accepts EAD as a user-provided input. "
+        "It does not train a separate EAD prediction model."
+    )
+
+    st.subheader("4. Expected Credit Loss (ECL)")
+
+    st.write(
+        """
+        Expected Credit Loss combines the probability of default,
+        expected loss severity and exposure amount.
+        """
+    )
+
+    st.latex(r"ECL = PD \times LGD \times EAD")
+
+    st.success(
+        "CreditLens implements this simplified calculation "
+        "using the predicted PD and user-provided LGD and EAD."
+    )
+
+    st.subheader("5. IFRS 9 Overview")
+
+    st.write(
+        """
+        IFRS 9 is an international financial reporting standard
+        that includes requirements for recognising and measuring
+        expected credit losses on financial assets.
+        """
+    )
+
+    st.markdown(
+        """
+        **Key concepts:**
+
+        - Stage 1: 12-month expected credit losses.
+        - Stage 2: Lifetime expected credit losses following a
+          significant increase in credit risk.
+        - Stage 3: Lifetime expected credit losses for
+          credit-impaired financial assets.
+        """
+    )
+
+    st.warning(
+        """
+        CreditLens does not implement the complete IFRS 9 framework.
+        A full implementation requires additional considerations,
+        including forward-looking information, scenario weighting,
+        discounting and staging.
+        """
+    )
+
+    st.divider()
+
+    st.subheader("CreditLens Implementation Summary")
+
+    implementation_data = {
+        "Component": ["PD", "LGD", "EAD", "ECL", "IFRS 9"],
+        "Implementation": [
+            "Machine learning models",
+            "User-provided assumption",
+            "User-provided assumption",
+            "Simplified calculation",
+            "Educational overview",
+        ],
+        "Status": [
+            "Implemented",
+            "Assumption only",
+            "Assumption only",
+            "Implemented",
+            "Educational",
+        ],
+    }
+
+    st.dataframe(
+        pd.DataFrame(implementation_data),
+        use_container_width=True,
+        hide_index=True,
+    )
+
