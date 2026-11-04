@@ -315,6 +315,8 @@ elif page == "PD Prediction":
                 customer_data,
             )[0]
 
+            st.session_state["latest_pd"] = float(probability)
+
             risk_category = classify_risk(probability)
 
             st.divider()
@@ -583,10 +585,122 @@ elif page == "SHAP Explainability":
 
 
 
-elif page == "Expected Loss Calculator":
-    st.header("Expected Credit Loss Calculator")
-    st.info("The expected loss calculator is being developed.")
 
+
+ 
+elif page == "Expected Loss Calculator":
+
+    st.header("Expected Credit Loss Calculator")
+
+    st.markdown(
+        """
+        Estimate potential credit losses using Probability of Default,
+        Loss Given Default and Exposure at Default.
+        """
+    )
+
+    st.info(
+        "This is an illustrative expected-loss calculator, "
+        "not a complete IFRS 9 implementation."
+    )
+
+    st.subheader("Enter Credit Risk Assumptions")
+
+    latest_pd = st.session_state.get("latest_pd")
+
+    if latest_pd is not None:
+        st.success(
+            f"Latest Random Forest prediction: {latest_pd:.2%}"
+        )
+
+        use_latest_pd = st.checkbox(
+            "Use latest customer PD prediction",
+            value=True,
+        )
+    else:
+        use_latest_pd = False
+
+        st.info(
+            "No customer prediction available yet. "
+            "Enter PD manually or visit the PD Prediction page first."
+        )
+
+    if use_latest_pd:
+        pd_value = latest_pd * 100
+
+        st.metric(
+            "Probability of Default (%)",
+            f"{pd_value:.2f}%",
+        )
+
+    else:
+        pd_value = st.number_input(
+        "Probability of Default (%)",
+        min_value=0.0,
+        max_value=100.0,
+        value=20.0,
+        step=1.0,
+        )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        lgd_value = st.number_input(
+            "Loss Given Default (%)",
+            min_value=0.0,
+            max_value=100.0,
+            value=45.0,
+            step=1.0,
+        )
+
+    with col2:
+        ead_value = st.number_input(
+            "Exposure at Default (£)",
+            min_value=0.0,
+            value=10000.0,
+            step=500.0,
+        )
+
+    if st.button(
+        "Calculate Expected Credit Loss",
+        use_container_width=True,
+    ):
+
+        expected_loss = (
+            (pd_value / 100)
+            * (lgd_value / 100)
+            * ead_value
+        )
+
+        st.divider()
+        st.subheader("Expected Credit Loss Result")
+
+        result_col1, result_col2 = st.columns(2)
+
+        result_col1.metric(
+            "Expected Credit Loss",
+            f"£{expected_loss:,.2f}",
+        )
+
+        result_col2.metric(
+            "Exposure at Default",
+            f"£{ead_value:,.2f}",
+        )
+
+        st.progress(
+            float(expected_loss / ead_value)
+            if ead_value > 0 else 0.0
+        )
+
+        st.markdown("**Calculation breakdown**")
+        st.write(f"PD: {pd_value:.2f}%")
+        st.write(f"LGD: {lgd_value:.2f}%")
+        st.write(f"EAD: £{ead_value:,.2f}")
+
+        st.success(
+            f"Illustrative Expected Credit Loss: £{expected_loss:,.2f}"
+        )
+   
 
 elif page == "Credit Risk Fundamentals":
     st.header("Credit Risk Fundamentals")
